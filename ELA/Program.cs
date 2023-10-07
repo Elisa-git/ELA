@@ -1,4 +1,4 @@
-using ELA.Models;
+using ELA.Models.Config;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

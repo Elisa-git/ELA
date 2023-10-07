@@ -1,4 +1,5 @@
 ﻿using ELA.Models.Enums;
+using ELA.Models.Heranca;
 
 namespace ELA.Models
 {
