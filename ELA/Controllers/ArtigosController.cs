@@ -71,7 +71,7 @@ namespace ELA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ArtigoExists(id))
+                if (!artigoValidacao.ArtigoExists(id))
                 {
                     return NotFound();
                 }
@@ -120,11 +120,6 @@ namespace ELA.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ArtigoExists(int id)
-        {
-            return (_context.Artigos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

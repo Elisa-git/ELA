@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ELA.Models;
 using ELA.Models.Config;
+using ELA.Validacoes.Interface;
 
 namespace ELA.Controllers
 {
@@ -15,10 +16,11 @@ namespace ELA.Controllers
     public class AssuntosController : ControllerBase
     {
         private readonly MorusContext _context;
-
-        public AssuntosController(MorusContext context)
+        private readonly IAssuntoValidacao assuntoValidacao;
+        public AssuntosController(MorusContext context, IAssuntoValidacao assuntoValidacao)
         {
             _context = context;
+            this.assuntoValidacao = assuntoValidacao;
         }
 
         // GET: api/Assuntos
@@ -68,7 +70,7 @@ namespace ELA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AssuntoExists(id))
+                if (!assuntoValidacao.AssuntoExists(id))
                 {
                     return NotFound();
                 }
@@ -114,11 +116,6 @@ namespace ELA.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool AssuntoExists(int id)
-        {
-            return (_context.Assuntos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -10,9 +10,14 @@ namespace ELA.Models.Heranca
         public string Resumo { get; set; }
         public DateTime DataPostagem { get; set; }
 
-        // Relacionamento com a classe Assunto
-        public List<Assunto> Assuntos { get; set; }
+        // Relacionamento muitos -> muitos
+        // public List<Assunto> Assuntos { get; set; }                
 
+        // Relacionamento um -> muitos
+        public int UsuarioId { get; set; }
+        public Usuario Usuario { get; set; } = null!;
 
+        // Relacionamento muitos -> muitos
+        public List<Assunto> Assuntos { get; } = new();
     }
 }

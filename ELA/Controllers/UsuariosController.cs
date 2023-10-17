@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ELA.Models;
 using ELA.Models.Config;
+using ELA.Validacoes.Interface;
 
 namespace ELA.Controllers
 {
@@ -15,10 +16,12 @@ namespace ELA.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly MorusContext _context;
+        private readonly IUsuarioValidacao usuarioValidacao;
 
-        public UsuariosController(MorusContext context)
+        public UsuariosController(MorusContext context, IUsuarioValidacao usuarioValidacao)
         {
             _context = context;
+            this.usuarioValidacao = usuarioValidacao;
         }
 
         // GET: api/Usuarios
@@ -68,7 +71,7 @@ namespace ELA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(id))
+                if (!usuarioValidacao.UsuarioExists(id))
                 {
                     return NotFound();
                 }
@@ -114,11 +117,6 @@ namespace ELA.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool UsuarioExists(int id)
-        {
-            return (_context.Usuarios?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
