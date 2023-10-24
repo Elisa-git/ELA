@@ -7,6 +7,7 @@ namespace ELA.Validacoes.Interface
     {
         bool FiqueAtentoExists(int id);
         FiqueAtento ValidarFiqueAtento(FiqueAtentoRequest fiqueAtentoRequest);
-        void ValidarAtualizacao(FiqueAtento fiqueAtento);
+        FiqueAtento ValidarAtualizacao(FiqueAtentoPutRequest fiqueAtentoPutRequest);
+        FiqueAtento RetornarFiqueAtento(int id);
     }
 }

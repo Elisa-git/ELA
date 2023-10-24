@@ -33,6 +33,7 @@ var config = new AutoMapper.MapperConfiguration(cfg =>
 {
     cfg.CreateMap<ArtigoRequest, Artigo>();
     cfg.CreateMap<FiqueAtentoRequest, FiqueAtento>();
+    cfg.CreateMap<FiqueAtentoPutRequest, FiqueAtento>();
     cfg.CreateMap<PerguntaRequest, Pergunta>();
 });
 

@@ -3,6 +3,8 @@ using ELA.Models;
 using ELA.Models.Config;
 using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
+using Microsoft.EntityFrameworkCore;
+using NuGet.Versioning;
 
 namespace ELA.Validacoes
 {
@@ -28,50 +30,54 @@ namespace ELA.Validacoes
 
         public FiqueAtento ValidarFiqueAtento(FiqueAtentoRequest fiqueAtentoRequest)
         {
-            FiqueAtento fiqueAtento = MapearFiqueAtento(fiqueAtentoRequest);
+            var fiqueAtentoMapeado = mapper.Map<FiqueAtento>(fiqueAtentoRequest);
+            FiqueAtento fiqueAtento = ValidarAssuntos(fiqueAtentoMapeado, fiqueAtentoRequest.AssuntoId);
 
             if (!usuarioValidacao.UsuarioExists(fiqueAtento.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
+            fiqueAtento.DataPostagem = DateTime.Now;
             return fiqueAtento;
         }
 
-        private FiqueAtento MapearFiqueAtento(FiqueAtentoRequest fiqueAtentoRequest)
-        {
-            var fiqueAtentoMapeado = mapper.Map<FiqueAtento>(fiqueAtentoRequest);
+        public FiqueAtento ValidarAtualizacao(FiqueAtentoPutRequest fiqueAtentoPutRequest)
+        {         
+            if (!FiqueAtentoExists(fiqueAtentoPutRequest.Id))
+                throw new Exception("Id informado não existe");
 
-            foreach (var id in fiqueAtentoRequest.AssuntoIds)
+            if (!usuarioValidacao.UsuarioExists(fiqueAtentoPutRequest.UsuarioId))
+                throw new Exception("Usuário não cadastrado");
+
+            var retorno = RetornarFiqueAtento(fiqueAtentoPutRequest.Id);
+            FiqueAtento fiqueAtento = ValidarAssuntos(retorno, fiqueAtentoPutRequest.AssuntoId);
+
+            mapper.Map(fiqueAtento, retorno);
+
+            return retorno;
+        }
+
+        private FiqueAtento ValidarAssuntos(FiqueAtento fiqueAtento, List<int> assuntosId)
+        {
+            List<Assunto> assuntos = new List<Assunto>();
+
+            foreach (var id in assuntosId)
             {
                 var assunto = assuntoValidacao.RetornaAssunto(id);
 
                 if (assunto == null)
                     throw new Exception("O assunto" + assunto.Id + "não existe");
 
-                List<Assunto> assuntos = new List<Assunto>();
                 assuntos.Add(assunto);
-                fiqueAtentoMapeado.Assuntos = assuntos;
             }
 
-            fiqueAtentoMapeado.DataPostagem = DateTime.Now;
-            return fiqueAtentoMapeado;
+            fiqueAtento.Assuntos = assuntos;
+            return fiqueAtento;
         }
 
-        public void ValidarAtualizacao(FiqueAtento fiqueAtento)
+        public FiqueAtento RetornarFiqueAtento(int id)
         {
-            if (fiqueAtento.Id == null)
-                throw new Exception("Id não informado");
-            
-            if (!FiqueAtentoExists(fiqueAtento.Id))
-                throw new Exception("Id informado não existe");
-
-            foreach (var assunto in fiqueAtento.Assuntos)
-            {
-                if (!assuntoValidacao.AssuntoExists(assunto.Id))
-                    throw new Exception("O assunto" + assunto.Id + "não existe");
-            }
-
-            if (!usuarioValidacao.UsuarioExists(fiqueAtento.UsuarioId))
-                throw new Exception("Usuário não cadastrado");
+            return context.FiqueAtentos.Include(a => a.Assuntos).FirstOrDefault();
         }
+
     }
 }

@@ -34,10 +34,7 @@ namespace ELA.Models.Config
 
             modelBuilder.Entity<FiqueAtento>()
                 .HasMany(u => u.Assuntos)
-                .WithMany()
-                .UsingEntity(
-                    l => l.HasOne(typeof(Assunto)).WithMany().OnDelete(DeleteBehavior.Restrict)
-                );
+                .WithMany();
 
             this.SeedDatabaseInicial(modelBuilder);
         }

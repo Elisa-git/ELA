@@ -42,7 +42,7 @@ namespace ELA.Validacoes
         {
             var artigoMapeado = mapper.Map<Artigo>(arigoRequest);
 
-            foreach (var id in arigoRequest.AssuntoIds)
+            foreach (var id in arigoRequest.AssuntoId)
             {
                 var assunto = assuntoValidacao.RetornaAssunto(id);
 

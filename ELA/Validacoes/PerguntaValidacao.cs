@@ -41,7 +41,7 @@ namespace ELA.Validacoes
         {
             var perguntaMapeada = mapper.Map<Pergunta>(perguntaRequest);
 
-            foreach (var id in perguntaRequest.AssuntoIds)
+            foreach (var id in perguntaRequest.AssuntoId)
             {
                 var assunto = assuntoValidacao.RetornaAssunto(id);
 

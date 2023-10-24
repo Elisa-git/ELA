@@ -28,7 +28,8 @@ namespace ELA.Controllers
             {
                 return NotFound();
             }
-            return await context.FiqueAtentos.ToListAsync();
+
+            return await context.FiqueAtentos.Include(a => a.Assuntos).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -39,7 +40,7 @@ namespace ELA.Controllers
                 return NotFound();
             }
 
-            var fiqueAtento = await context.FiqueAtentos.FindAsync(id);
+            var fiqueAtento = fiqueAtentoValidacao.RetornarFiqueAtento(id);
 
             if (fiqueAtento == null)
             {
@@ -49,17 +50,17 @@ namespace ELA.Controllers
             return fiqueAtento;
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFiqueAtento(FiqueAtento fiqueAtento)
+        [HttpPut]
+        public async Task<IActionResult> PutFiqueAtento(FiqueAtentoPutRequest fiqueAtentoPutRequest)
         {
             try
             {
-                fiqueAtentoValidacao.ValidarAtualizacao(fiqueAtento);
+                var fiqueAtento = fiqueAtentoValidacao.ValidarAtualizacao(fiqueAtentoPutRequest);
 
                 context.Entry(fiqueAtento).State = EntityState.Modified;
                 await context.SaveChangesAsync();
 
-                return Ok();
+                return Ok(fiqueAtento);
             }
             catch (Exception ex)
             {
@@ -99,7 +100,9 @@ namespace ELA.Controllers
                 {
                     return NotFound();
                 }
-                var fiqueAtento = await context.FiqueAtentos.FindAsync(id);
+
+                var fiqueAtento = fiqueAtentoValidacao.RetornarFiqueAtento(id);
+
                 if (fiqueAtento == null)
                 {
                     return NotFound();

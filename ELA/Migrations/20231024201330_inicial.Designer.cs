@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELA.Migrations
 {
     [DbContext(typeof(MorusContext))]
-    [Migration("20231024162214_inicial")]
+    [Migration("20231024201330_inicial")]
     partial class inicial
     {
         /// <inheritdoc />
@@ -50,12 +50,7 @@ namespace ELA.Migrations
                     b.Property<int>("FiqueAtentoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AssuntoId")
-                        .HasColumnType("int");
-
                     b.HasKey("AssuntosId", "FiqueAtentoId");
-
-                    b.HasIndex("AssuntoId");
 
                     b.HasIndex("FiqueAtentoId");
 
@@ -281,11 +276,6 @@ namespace ELA.Migrations
 
             modelBuilder.Entity("AssuntoFiqueAtento", b =>
                 {
-                    b.HasOne("ELA.Models.Assunto", null)
-                        .WithMany()
-                        .HasForeignKey("AssuntoId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ELA.Models.Assunto", null)
                         .WithMany()
                         .HasForeignKey("AssuntosId")

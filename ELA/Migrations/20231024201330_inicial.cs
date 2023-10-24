@@ -160,18 +160,11 @@ namespace ELA.Migrations
                 columns: table => new
                 {
                     AssuntosId = table.Column<int>(type: "int", nullable: false),
-                    FiqueAtentoId = table.Column<int>(type: "int", nullable: false),
-                    AssuntoId = table.Column<int>(type: "int", nullable: true)
+                    FiqueAtentoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AssuntoFiqueAtento", x => new { x.AssuntosId, x.FiqueAtentoId });
-                    table.ForeignKey(
-                        name: "FK_AssuntoFiqueAtento_Assuntos_AssuntoId",
-                        column: x => x.AssuntoId,
-                        principalTable: "Assuntos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AssuntoFiqueAtento_Assuntos_AssuntosId",
                         column: x => x.AssuntosId,
@@ -248,11 +241,6 @@ namespace ELA.Migrations
                 name: "IX_Artigos_UsuarioId",
                 table: "Artigos",
                 column: "UsuarioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AssuntoFiqueAtento_AssuntoId",
-                table: "AssuntoFiqueAtento",
-                column: "AssuntoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssuntoFiqueAtento_FiqueAtentoId",
