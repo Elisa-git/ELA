@@ -104,20 +104,27 @@ namespace ELA.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePergunta(int id)
         {
-            if (context.Perguntas == null)
-            {
-                return NotFound();
-            }
-            var pergunta = await context.Perguntas.FindAsync(id);
-            if (pergunta == null)
-            {
-                return NotFound();
-            }
+            try 
+            { 
+                if (context.Perguntas == null)
+                {
+                    return NotFound();
+                }
+                var pergunta = await context.Perguntas.FindAsync(id);
+                if (pergunta == null)
+                {
+                    return NotFound();
+                }
 
-            context.Perguntas.Remove(pergunta);
-            await context.SaveChangesAsync();
+                context.Perguntas.Remove(pergunta);
+                await context.SaveChangesAsync();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

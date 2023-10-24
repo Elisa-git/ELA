@@ -128,7 +128,8 @@ namespace ELA.Migrations
                 columns: table => new
                 {
                     ArtigoId = table.Column<int>(type: "int", nullable: false),
-                    AssuntosId = table.Column<int>(type: "int", nullable: false)
+                    AssuntosId = table.Column<int>(type: "int", nullable: false),
+                    AssuntoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -139,6 +140,12 @@ namespace ELA.Migrations
                         principalTable: "Artigos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArtigoAssunto_Assuntos_AssuntoId",
+                        column: x => x.AssuntoId,
+                        principalTable: "Assuntos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ArtigoAssunto_Assuntos_AssuntosId",
                         column: x => x.AssuntosId,
@@ -153,11 +160,18 @@ namespace ELA.Migrations
                 columns: table => new
                 {
                     AssuntosId = table.Column<int>(type: "int", nullable: false),
-                    FiqueAtentoId = table.Column<int>(type: "int", nullable: false)
+                    FiqueAtentoId = table.Column<int>(type: "int", nullable: false),
+                    AssuntoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AssuntoFiqueAtento", x => new { x.AssuntosId, x.FiqueAtentoId });
+                    table.ForeignKey(
+                        name: "FK_AssuntoFiqueAtento_Assuntos_AssuntoId",
+                        column: x => x.AssuntoId,
+                        principalTable: "Assuntos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AssuntoFiqueAtento_Assuntos_AssuntosId",
                         column: x => x.AssuntosId,
@@ -221,6 +235,11 @@ namespace ELA.Migrations
                 values: new object[] { 1, "123.123.123-12", new DateTime(1987, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), "bella.swan@email.com", "Isabella Swan", "edwardJacob", 3 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ArtigoAssunto_AssuntoId",
+                table: "ArtigoAssunto",
+                column: "AssuntoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ArtigoAssunto_AssuntosId",
                 table: "ArtigoAssunto",
                 column: "AssuntosId");
@@ -229,6 +248,11 @@ namespace ELA.Migrations
                 name: "IX_Artigos_UsuarioId",
                 table: "Artigos",
                 column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssuntoFiqueAtento_AssuntoId",
+                table: "AssuntoFiqueAtento",
+                column: "AssuntoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssuntoFiqueAtento_FiqueAtentoId",

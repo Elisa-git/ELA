@@ -22,12 +22,15 @@ builder.Services.AddScoped<IUsuarioValidacao, UsuarioValidacao>();
 builder.Services.AddScoped<IArtigoValidacao, ArtigoValidacao>();
 builder.Services.AddScoped<IAssuntoValidacao, AssuntoValidacao>();
 builder.Services.AddScoped<IPerguntaValidacao, PerguntaValidacao>();
+builder.Services.AddScoped<IFiqueAtentoValidacao, FiqueAtentoValidacao>();
 
 // Mapeamento
 
 var config = new AutoMapper.MapperConfiguration(cfg =>
 {
     cfg.CreateMap<ArtigoRequest, Artigo>();
+    cfg.CreateMap<FiqueAtentoRequest, FiqueAtento>();
+    cfg.CreateMap<PerguntaRequest, Pergunta>();
 });
 
 IMapper mapper = config.CreateMapper();

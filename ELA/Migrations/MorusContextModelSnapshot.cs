@@ -27,7 +27,12 @@ namespace ELA.Migrations
                     b.Property<int>("AssuntosId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AssuntoId")
+                        .HasColumnType("int");
+
                     b.HasKey("ArtigoId", "AssuntosId");
+
+                    b.HasIndex("AssuntoId");
 
                     b.HasIndex("AssuntosId");
 
@@ -42,7 +47,12 @@ namespace ELA.Migrations
                     b.Property<int>("FiqueAtentoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AssuntoId")
+                        .HasColumnType("int");
+
                     b.HasKey("AssuntosId", "FiqueAtentoId");
+
+                    b.HasIndex("AssuntoId");
 
                     b.HasIndex("FiqueAtentoId");
 
@@ -256,6 +266,11 @@ namespace ELA.Migrations
 
                     b.HasOne("ELA.Models.Assunto", null)
                         .WithMany()
+                        .HasForeignKey("AssuntoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ELA.Models.Assunto", null)
+                        .WithMany()
                         .HasForeignKey("AssuntosId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -263,6 +278,11 @@ namespace ELA.Migrations
 
             modelBuilder.Entity("AssuntoFiqueAtento", b =>
                 {
+                    b.HasOne("ELA.Models.Assunto", null)
+                        .WithMany()
+                        .HasForeignKey("AssuntoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ELA.Models.Assunto", null)
                         .WithMany()
                         .HasForeignKey("AssuntosId")
