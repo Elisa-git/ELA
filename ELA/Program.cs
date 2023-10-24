@@ -12,11 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MorusContext>(opt => opt.UseMySQL("Server=localhost;Database=ElaDb;user=root"));
+
+// Camada Validacao
 
 builder.Services.AddScoped<IUsuarioValidacao, UsuarioValidacao>();
 builder.Services.AddScoped<IArtigoValidacao, ArtigoValidacao>();
