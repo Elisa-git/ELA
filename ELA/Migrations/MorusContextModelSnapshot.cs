@@ -57,7 +57,12 @@ namespace ELA.Migrations
                     b.Property<int>("PerguntaId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AssuntoId")
+                        .HasColumnType("int");
+
                     b.HasKey("AssuntosId", "PerguntaId");
+
+                    b.HasIndex("AssuntoId");
 
                     b.HasIndex("PerguntaId");
 
@@ -90,7 +95,8 @@ namespace ELA.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -112,6 +118,23 @@ namespace ELA.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Assuntos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Descricao = "Infantil"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Descricao = "Meninas"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Descricao = "Meninos"
+                        });
                 });
 
             modelBuilder.Entity("ELA.Models.FiqueAtento", b =>
@@ -136,7 +159,8 @@ namespace ELA.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -154,10 +178,6 @@ namespace ELA.Migrations
                     b.Property<DateTime>("DataPostagem")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("PerguntaTitulo")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Resposta")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -171,7 +191,8 @@ namespace ELA.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -211,6 +232,18 @@ namespace ELA.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CPF = "123.123.123-12",
+                            DataNascimento = new DateTime(1987, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "bella.swan@email.com",
+                            Nome = "Isabella Swan",
+                            Senha = "edwardJacob",
+                            TipoUsuarioEnum = 3
+                        });
                 });
 
             modelBuilder.Entity("ArtigoAssunto", b =>
@@ -245,6 +278,11 @@ namespace ELA.Migrations
 
             modelBuilder.Entity("AssuntoPergunta", b =>
                 {
+                    b.HasOne("ELA.Models.Assunto", null)
+                        .WithMany()
+                        .HasForeignKey("AssuntoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ELA.Models.Assunto", null)
                         .WithMany()
                         .HasForeignKey("AssuntosId")

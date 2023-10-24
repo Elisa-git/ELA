@@ -1,4 +1,5 @@
-﻿using ELA.Models.Heranca;
+﻿using ELA.Models.Enums;
+using ELA.Models.Heranca;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Reflection.Metadata;
@@ -17,24 +18,41 @@ namespace ELA.Models.Config
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Artigo>()
-                .HasOne(e => e.Usuario)
+            modelBuilder.Entity<Pergunta>()
+                .HasMany(u => u.Assuntos)
                 .WithMany()
-                .HasForeignKey(e => e.UsuarioId)
-                .IsRequired();
+                .UsingEntity(
+                    l => l.HasOne(typeof(Assunto)).WithMany().OnDelete(DeleteBehavior.Restrict)
+                );
 
             modelBuilder.Entity<Artigo>()
-                .HasMany(e => e.Assuntos)
-                .WithMany();
-            
-            modelBuilder.Entity<Pergunta>()
-                .HasMany(e => e.Assuntos)
-                .WithMany();
-            
+                .HasMany(u => u.Assuntos)
+                .WithMany()
+                .UsingEntity(
+                    l => l.HasOne(typeof(Assunto)).WithMany().OnDelete(DeleteBehavior.Restrict)
+                );
+
             modelBuilder.Entity<FiqueAtento>()
-                .HasMany(e => e.Assuntos)
-                .WithMany();
+                .HasMany(u => u.Assuntos)
+                .WithMany()
+                .UsingEntity(
+                    l => l.HasOne(typeof(Assunto)).WithMany().OnDelete(DeleteBehavior.Restrict)
+                );
+
+            this.SeedDatabaseInicial(modelBuilder);
         }
 
+        private void SeedDatabaseInicial(ModelBuilder builder)
+        {
+            builder.Entity<Usuario>().HasData
+                (new Usuario { Id = 1, CPF = "123.123.123-12", DataNascimento = new DateTime(1987, 09, 13), Email = "bella.swan@email.com", Nome = "Isabella Swan", Senha = "edwardJacob", TipoUsuarioEnum = TipoUsuarioEnum.Responsavel });
+
+            builder.Entity<Assunto>().HasData
+                (
+                    new Assunto { Id = 1, Descricao = "Infantil" },
+                    new Assunto { Id = 2, Descricao = "Meninas" },
+                    new Assunto { Id = 3, Descricao = "Meninos" }
+                );
+        }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using ELA.Models;
+using ELA.Models.Requests;
 
 namespace ELA.Validacoes.Interface
 {
     public interface IPerguntaValidacao
     {
         bool PerguntaExists(int id);
-        Pergunta ValidarPergunta(Pergunta pergunta);
+        Pergunta ValidarPergunta(PerguntaRequest perguntaRequest);
     }
 }

@@ -4,10 +4,12 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ELA.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,14 +54,14 @@ namespace ELA.Migrations
                 name: "Artigos",
                 columns: table => new
                 {
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     SubTitulo = table.Column<string>(type: "longtext", nullable: false),
                     Texto = table.Column<string>(type: "longtext", nullable: false),
                     Titulo = table.Column<string>(type: "longtext", nullable: false),
                     Resumo = table.Column<string>(type: "longtext", nullable: false),
-                    DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false)
+                    DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,13 +79,13 @@ namespace ELA.Migrations
                 name: "FiqueAtentos",
                 columns: table => new
                 {
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Texto = table.Column<string>(type: "longtext", nullable: false),
                     Titulo = table.Column<string>(type: "longtext", nullable: false),
                     Resumo = table.Column<string>(type: "longtext", nullable: false),
-                    DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false)
+                    DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,14 +103,13 @@ namespace ELA.Migrations
                 name: "Perguntas",
                 columns: table => new
                 {
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    PerguntaTitulo = table.Column<string>(type: "longtext", nullable: false),
                     Resposta = table.Column<string>(type: "longtext", nullable: false),
                     Titulo = table.Column<string>(type: "longtext", nullable: false),
                     Resumo = table.Column<string>(type: "longtext", nullable: false),
-                    DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false)
+                    DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -177,11 +178,18 @@ namespace ELA.Migrations
                 columns: table => new
                 {
                     AssuntosId = table.Column<int>(type: "int", nullable: false),
-                    PerguntaId = table.Column<int>(type: "int", nullable: false)
+                    PerguntaId = table.Column<int>(type: "int", nullable: false),
+                    AssuntoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AssuntoPergunta", x => new { x.AssuntosId, x.PerguntaId });
+                    table.ForeignKey(
+                        name: "FK_AssuntoPergunta_Assuntos_AssuntoId",
+                        column: x => x.AssuntoId,
+                        principalTable: "Assuntos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AssuntoPergunta_Assuntos_AssuntosId",
                         column: x => x.AssuntosId,
@@ -197,6 +205,21 @@ namespace ELA.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.InsertData(
+                table: "Assuntos",
+                columns: new[] { "Id", "Descricao" },
+                values: new object[,]
+                {
+                    { 1, "Infantil" },
+                    { 2, "Meninas" },
+                    { 3, "Meninos" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Usuarios",
+                columns: new[] { "Id", "CPF", "DataNascimento", "Email", "Nome", "Senha", "TipoUsuarioEnum" },
+                values: new object[] { 1, "123.123.123-12", new DateTime(1987, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), "bella.swan@email.com", "Isabella Swan", "edwardJacob", 3 });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ArtigoAssunto_AssuntosId",
                 table: "ArtigoAssunto",
@@ -211,6 +234,11 @@ namespace ELA.Migrations
                 name: "IX_AssuntoFiqueAtento_FiqueAtentoId",
                 table: "AssuntoFiqueAtento",
                 column: "FiqueAtentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssuntoPergunta_AssuntoId",
+                table: "AssuntoPergunta",
+                column: "AssuntoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssuntoPergunta_PerguntaId",

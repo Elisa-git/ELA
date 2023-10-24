@@ -1,5 +1,6 @@
 ﻿using ELA.Models;
 using ELA.Models.Config;
+using ELA.Models.Requests;
 using ELA.Validacoes;
 using ELA.Validacoes.Interface;
 using Microsoft.AspNetCore.Http;
@@ -78,19 +79,26 @@ namespace ELA.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Pergunta>> PostPergunta(Pergunta pergunta)
+        public async Task<ActionResult<Pergunta>> PostPergunta(PerguntaRequest perguntaRequest)
         {
-            if (context.Perguntas == null)
+            try
             {
-                return Problem("Entity set 'MorusContext.Perguntas'  is null.");
+                if (context.Perguntas == null)
+                {
+                    return Problem("Entity set 'MorusContext.Perguntas'  is null.");
+                }
+
+                var pergunta = perguntaValidacao.ValidarPergunta(perguntaRequest);
+
+                await context.Perguntas.AddAsync(pergunta);
+                await context.SaveChangesAsync();
+
+                return CreatedAtAction("GetPergunta", new { id = pergunta.Id }, pergunta);
             }
-
-            perguntaValidacao.ValidarPergunta(pergunta);
-
-            context.Perguntas.Add(pergunta);
-            await context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPergunta", new { id = pergunta.Id }, pergunta);
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]

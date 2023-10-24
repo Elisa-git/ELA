@@ -28,10 +28,11 @@ namespace ELA.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
-          if (_context.Usuarios == null)
-          {
-              return NotFound();
-          }
+            if (_context.Usuarios == null)
+            {
+                return NotFound();
+            }
+
             return await _context.Usuarios.ToListAsync();
         }
 
@@ -39,10 +40,10 @@ namespace ELA.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Usuario>> GetUsuario(int id)
         {
-          if (_context.Usuarios == null)
-          {
-              return NotFound();
-          }
+            if (_context.Usuarios == null)
+            {
+                return NotFound();
+            }
             var usuario = await _context.Usuarios.FindAsync(id);
 
             if (usuario == null)
@@ -89,14 +90,21 @@ namespace ELA.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
-          if (_context.Usuarios == null)
-          {
-              return Problem("Entity set 'MorusContext.Usuarios'  is null.");
-          }
-            _context.Usuarios.Add(usuario);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if (_context.Usuarios == null)
+                {
+                    return Problem("Entity set 'MorusContext.Usuarios' is null.");
+                }
 
-            return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
+                await usuarioValidacao.PostValidation(usuario);
+
+                return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
+            }
+            catch (Exception e) 
+            {
+                return BadRequest(e);
+            }
         }
 
         // DELETE: api/Usuarios/5
@@ -117,6 +125,25 @@ namespace ELA.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPost("/login")]
+        public async Task<ActionResult> Login([FromBody]Usuario usuario)
+        {
+            try
+            {
+                if (_context.Usuarios == null)
+                {
+                    return Problem("Entity set 'MorusContext.Usuarios' is null.");
+                }
+
+                await usuarioValidacao.Login(usuario);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }

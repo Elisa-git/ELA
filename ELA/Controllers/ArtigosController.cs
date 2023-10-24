@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using ELA.Models;
 using ELA.Models.Config;
 using ELA.Validacoes.Interface;
+using ELA.Models.Requests;
+using AutoMapper;
 
 namespace ELA.Controllers
 {
@@ -87,19 +89,26 @@ namespace ELA.Controllers
         // POST: api/Artigos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Artigo>> PostArtigo(Artigo artigo)
+        public async Task<ActionResult<Artigo>> PostArtigo(ArtigoRequest artigoRequest)
         {
-            if (_context.Artigos == null)
+            try
             {
-                return Problem("Entity set 'MorusContext.Artigos'  is null.");
+                if (_context.Artigos == null)
+                {
+                    return Problem("Entity set 'MorusContext.Artigos'  is null.");
+                }
+
+                var artigo = artigoValidacao.ValidarArtigo(artigoRequest);
+
+                _context.Artigos.Add(artigo);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetArtigo", new { id = artigo.Id }, artigo);
             }
-
-            artigoValidacao.ValidarArtigo(artigo);
-
-            _context.Artigos.Add(artigo);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetArtigo", new { id = artigo.Id }, artigo);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Artigos/5
