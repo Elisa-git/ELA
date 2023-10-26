@@ -5,7 +5,9 @@ namespace ELA.Validacoes.Interface
 {
     public interface IArtigoValidacao
     {
-        Artigo ValidarArtigo(ArtigoRequest artigoRequest);
         bool ArtigoExists(int id);
+        Artigo ValidarArtigo(ArtigoRequest artigoRequest);
+        Artigo ValidarAtualizacao(ArtigoPutRequest artigoPutRequest);
+        Artigo RetornarArtigo(int id);
     }
 }

@@ -3,6 +3,7 @@ using ELA.Models;
 using ELA.Models.Config;
 using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace ELA.Validacoes
 {
@@ -29,32 +30,55 @@ namespace ELA.Validacoes
 
         public Pergunta ValidarPergunta(PerguntaRequest perguntaRequest)
         {
-            Pergunta pergunta = MapearPergunta(perguntaRequest);
+            var perguntaMapeada = mapper.Map<Pergunta>(perguntaRequest);
+            Pergunta pergunta = ValidarAssuntos(perguntaMapeada, perguntaRequest.AssuntoId);
 
             if (!usuarioValidacao.UsuarioExists(pergunta.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
+            pergunta.DataPostagem = DateTime.Now;
             return pergunta;
         }
 
-        private Pergunta MapearPergunta(PerguntaRequest perguntaRequest)
-        {
-            var perguntaMapeada = mapper.Map<Pergunta>(perguntaRequest);
 
-            foreach (var id in perguntaRequest.AssuntoId)
+        public Pergunta ValidarAtualizacao(PerguntaPutRequest perguntaPutRequest)
+        {
+            if (!PerguntaExists(perguntaPutRequest.Id))
+                throw new Exception("Id informado não existe");
+
+            if (!usuarioValidacao.UsuarioExists(perguntaPutRequest.UsuarioId))
+                throw new Exception("Usuário não cadastrado");
+
+            var retorno = RetornarPergunta(perguntaPutRequest.Id);
+            Pergunta pergunta = ValidarAssuntos(retorno, perguntaPutRequest.AssuntoId);
+
+            mapper.Map(pergunta, retorno);
+
+            return retorno;
+        }
+
+        private Pergunta ValidarAssuntos(Pergunta pergunta, List<int> assuntosId)
+        {
+            List<Assunto> assuntos = new List<Assunto>();
+
+            foreach (var id in assuntosId)
             {
                 var assunto = assuntoValidacao.RetornaAssunto(id);
 
                 if (assunto == null)
                     throw new Exception("O assunto" + assunto.Id + "não existe");
 
-                List<Assunto> assuntos = new List<Assunto>();
                 assuntos.Add(assunto);
-                perguntaMapeada.Assuntos = assuntos;
             }
 
-            perguntaMapeada.DataPostagem = DateTime.Now;
-            return perguntaMapeada;
+            pergunta.Assuntos = assuntos;
+            return pergunta;
         }
+
+        public Pergunta RetornarPergunta(int id)
+        {
+            return context.Perguntas.Include(a => a.Assuntos).FirstOrDefault(x => x.Id.Equals(id));
+        }
+
     }
 }

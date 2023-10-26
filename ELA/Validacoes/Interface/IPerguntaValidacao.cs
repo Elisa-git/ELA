@@ -7,5 +7,7 @@ namespace ELA.Validacoes.Interface
     {
         bool PerguntaExists(int id);
         Pergunta ValidarPergunta(PerguntaRequest perguntaRequest);
+        Pergunta ValidarAtualizacao(PerguntaPutRequest perguntaPutRequest);
+        Pergunta RetornarPergunta(int id);
     }
 }

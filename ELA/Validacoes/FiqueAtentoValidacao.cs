@@ -76,7 +76,7 @@ namespace ELA.Validacoes
 
         public FiqueAtento RetornarFiqueAtento(int id)
         {
-            return context.FiqueAtentos.Include(a => a.Assuntos).FirstOrDefault();
+            return context.FiqueAtentos.Include(a => a.Assuntos).FirstOrDefault(x => x.Id.Equals(id));
         }
 
     }

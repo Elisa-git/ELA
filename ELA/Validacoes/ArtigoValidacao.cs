@@ -15,7 +15,7 @@ namespace ELA.Validacoes
         private readonly IAssuntoValidacao assuntoValidacao;
         private readonly IMapper mapper;
 
-        public ArtigoValidacao(MorusContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper) 
+        public ArtigoValidacao(MorusContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
         {
             this.context = context;
             this.usuarioValidacao = usuarioValidacao;
@@ -30,32 +30,52 @@ namespace ELA.Validacoes
 
         public Artigo ValidarArtigo(ArtigoRequest artigoRequest)
         {
-            Artigo artigo = this.MapearArtigo(artigoRequest);
+            var artigoMapeado = mapper.Map<Artigo>(artigoRequest);
+            Artigo artigo = ValidarAssuntos(artigoMapeado, artigoRequest.AssuntoId);
 
             if (!usuarioValidacao.UsuarioExists(artigo.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
+            artigo.DataPostagem = DateTime.Now;
             return artigo;
         }
 
-        private Artigo MapearArtigo(ArtigoRequest arigoRequest)
+        public Artigo ValidarAtualizacao(ArtigoPutRequest artigoPutRequest)
         {
-            var artigoMapeado = mapper.Map<Artigo>(arigoRequest);
+            if (!ArtigoExists(artigoPutRequest.Id))
+                throw new Exception("Id informado não existe");
+            if (!usuarioValidacao.UsuarioExists(artigoPutRequest.Id)) 
+                throw new Exception("Usuário não cadastrado");
 
-            foreach (var id in arigoRequest.AssuntoId)
+            var retorno = RetornarArtigo(artigoPutRequest.Id);
+            Artigo artigo = ValidarAssuntos(retorno, artigoPutRequest.AssuntoId);
+
+            mapper.Map(artigo, retorno);
+
+            return retorno;
+        }
+
+        private Artigo ValidarAssuntos(Artigo artigo, List<int> assuntosId)
+        {
+            List<Assunto> assuntos = new List<Assunto>();
+
+            foreach (var id in assuntosId)
             {
                 var assunto = assuntoValidacao.RetornaAssunto(id);
 
                 if (assunto == null)
                     throw new Exception("O assunto" + assunto.Id + "não existe");
-                
-                List<Assunto> assuntos = new List<Assunto>();
+
                 assuntos.Add(assunto);
-                artigoMapeado.Assuntos = assuntos;
             }
 
-            artigoMapeado.DataPostagem = DateTime.Now;
-            return artigoMapeado;
+            artigo.Assuntos = assuntos;
+            return artigo;
+        }
+
+        public Artigo RetornarArtigo(int id)
+        {
+            return context.Artigos.Include(a => a.Assuntos).FirstOrDefault(x => x.Id.Equals(id));
         }
     }
 }

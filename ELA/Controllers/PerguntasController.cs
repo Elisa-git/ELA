@@ -29,7 +29,7 @@ namespace ELA.Controllers
             {
                 return NotFound();
             }
-            return await context.Perguntas.ToListAsync();
+            return await context.Perguntas.Include(a => a.Assuntos).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -39,43 +39,33 @@ namespace ELA.Controllers
             {
                 return NotFound();
             }
-            var pergunta = await context.Perguntas.FindAsync(id);
+
+            var pergunta = perguntaValidacao.RetornarPergunta(id);
 
             if (pergunta == null)
             {
                 return NotFound();
             }
 
-            return pergunta;
+            return Ok(pergunta);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPergunta(int id, Pergunta pergunta)
+        public async Task<IActionResult> PutPergunta(PerguntaPutRequest perguntaPutRequest)
         {
-            if (id != pergunta.Id)
-            {
-                return BadRequest();
-            }
-
-            context.Entry(pergunta).State = EntityState.Modified;
-
             try
             {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!perguntaValidacao.PerguntaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                var pergunta = perguntaValidacao.ValidarAtualizacao(perguntaPutRequest);
 
-            return NoContent();
+                context.Entry(pergunta).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+
+                return Ok(pergunta);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -110,7 +100,7 @@ namespace ELA.Controllers
                 {
                     return NotFound();
                 }
-                var pergunta = await context.Perguntas.FindAsync(id);
+                var pergunta = perguntaValidacao.RetornarPergunta(id);
                 if (pergunta == null)
                 {
                     return NotFound();
@@ -119,7 +109,7 @@ namespace ELA.Controllers
                 context.Perguntas.Remove(pergunta);
                 await context.SaveChangesAsync();
 
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

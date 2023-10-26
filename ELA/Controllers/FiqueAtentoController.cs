@@ -47,7 +47,7 @@ namespace ELA.Controllers
                 return NotFound();
             }
 
-            return fiqueAtento;
+            return Ok(fiqueAtento);
         }
 
         [HttpPut]

@@ -34,7 +34,7 @@ namespace ELA.Controllers
           {
               return NotFound();
           }
-            return await _context.Artigos.ToListAsync();
+            return await _context.Artigos.Include(a => a.Assuntos).ToListAsync();
         }
 
         // GET: api/Artigos/5
@@ -45,45 +45,34 @@ namespace ELA.Controllers
           {
               return NotFound();
           }
-            var artigo = await _context.Artigos.FindAsync(id);
+            var artigo = artigoValidacao.RetornarArtigo(id);
 
             if (artigo == null)
             {
                 return NotFound();
             }
 
-            return artigo;
+            return Ok(artigo);
         }
 
         // PUT: api/Artigos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutArtigo(int id, Artigo artigo)
+        public async Task<IActionResult> PutArtigo(ArtigoPutRequest artigoPutRequest)
         {
-            if (id != artigo.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(artigo).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!artigoValidacao.ArtigoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                var artigo = artigoValidacao.ValidarAtualizacao(artigoPutRequest);
 
-            return NoContent();
+                _context.Entry(artigo).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return Ok(artigo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Artigos
@@ -100,7 +89,7 @@ namespace ELA.Controllers
 
                 var artigo = artigoValidacao.ValidarArtigo(artigoRequest);
 
-                _context.Artigos.Add(artigo);
+                await _context.Artigos.AddAsync(artigo);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction("GetArtigo", new { id = artigo.Id }, artigo);
@@ -115,20 +104,29 @@ namespace ELA.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArtigo(int id)
         {
-            if (_context.Artigos == null)
+            try
             {
-                return NotFound();
+                if (_context.Artigos == null)
+                {
+                    return NotFound();
+                }
+
+                var artigo = artigoValidacao.RetornarArtigo(id);
+            
+                if (artigo == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Artigos.Remove(artigo);
+                await _context.SaveChangesAsync();
+
+                return Ok();
             }
-            var artigo = await _context.Artigos.FindAsync(id);
-            if (artigo == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-
-            _context.Artigos.Remove(artigo);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
     }
 }
