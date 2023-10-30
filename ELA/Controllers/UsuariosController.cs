@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using ELA.Models;
 using ELA.Models.Config;
 using ELA.Validacoes.Interface;
+using ELA.Models.Requests;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ELA.Controllers
 {
@@ -29,11 +31,9 @@ namespace ELA.Controllers
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
             if (_context.Usuarios == null)
-            {
                 return NotFound();
-            }
 
-            return await _context.Usuarios.ToListAsync();
+            return Ok(await _context.Usuarios.ToListAsync());
         }
 
         // GET: api/Usuarios/5
@@ -41,69 +41,61 @@ namespace ELA.Controllers
         public async Task<ActionResult<Usuario>> GetUsuario(int id)
         {
             if (_context.Usuarios == null)
-            {
                 return NotFound();
-            }
-            var usuario = await _context.Usuarios.FindAsync(id);
+
+            var usuario = usuarioValidacao.RetornarUsuario(id);
 
             if (usuario == null)
-            {
                 return NotFound();
-            }
 
-            return usuario;
+            return Ok(usuario);
         }
 
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
+        [HttpPut]
+        public async Task<IActionResult> PutUsuario(Usuario usuario)
         {
-            if (id != usuario.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(usuario).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!usuarioValidacao.UsuarioExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                if (usuario.Id == null)
+                    return BadRequest();
 
-            return NoContent();
+                var newData = new DateTime();
+                newData = usuario.DataNascimento.Date;
+                usuario.DataNascimento = newData;
+
+                _context.Entry(usuario).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+        public async Task<ActionResult<Usuario>> PostUsuario(UsuarioRequest usuarioRequest)
         {
             try
             {
                 if (_context.Usuarios == null)
-                {
                     return Problem("Entity set 'MorusContext.Usuarios' is null.");
-                }
 
-                await usuarioValidacao.PostValidation(usuario);
+                var usuario = usuarioValidacao.PostUsuario(usuarioRequest);
 
-                return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
+                await _context.Usuarios.AddAsync(usuario);
+                await _context.SaveChangesAsync();
+
+                return Ok(usuario);
             }
-            catch (Exception e) 
+            catch (Exception ex) 
             {
-                return BadRequest(e);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -111,24 +103,29 @@ namespace ELA.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)
         {
-            if (_context.Usuarios == null)
+            try
             {
-                return NotFound();
+                if (_context.Usuarios == null)
+                    return NotFound();
+
+                var usuario = usuarioValidacao.RetornarUsuario(id);
+
+                if (usuario == null)
+                    return NotFound();
+
+                _context.Usuarios.Remove(usuario);
+                await _context.SaveChangesAsync();
+
+                return Ok();
             }
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-
-            _context.Usuarios.Remove(usuario);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         [HttpPost("/login")]
-        public async Task<ActionResult> Login([FromBody]Usuario usuario)
+        public async Task<ActionResult> Login([FromBody]LoginRequest loginRequest)
         {
             try
             {
@@ -137,7 +134,7 @@ namespace ELA.Controllers
                     return Problem("Entity set 'MorusContext.Usuarios' is null.");
                 }
 
-                await usuarioValidacao.Login(usuario);
+                await usuarioValidacao.Login(loginRequest);
                 return Ok();
             }
             catch (Exception e)

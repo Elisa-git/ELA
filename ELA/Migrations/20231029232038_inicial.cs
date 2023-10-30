@@ -225,7 +225,11 @@ namespace ELA.Migrations
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "Id", "CPF", "DataNascimento", "Email", "Nome", "Senha", "TipoUsuarioEnum" },
-                values: new object[] { 1, "123.123.123-12", new DateTime(1987, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), "bella.swan@email.com", "Isabella Swan", "edwardJacob", 3 });
+                values: new object[,]
+                {
+                    { 1, "123.123.123-12", new DateTime(1987, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), "bella.swan@email.com", "Isabella Swan", "edwardJacob", 3 },
+                    { 2, "122.123.123-12", new DateTime(1987, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), "katnip@email.com", "Katniss Everdeen", "girlOnFire", 0 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ArtigoAssunto_AssuntoId",

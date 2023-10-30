@@ -29,7 +29,7 @@ namespace ELA.Controllers
             {
                 return NotFound();
             }
-            return await context.Perguntas.Include(a => a.Assuntos).ToListAsync();
+            return Ok(await context.Perguntas.Include(a => a.Assuntos).ToListAsync());
         }
 
         [HttpGet("{id}")]
@@ -50,7 +50,7 @@ namespace ELA.Controllers
             return Ok(pergunta);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutPergunta(PerguntaPutRequest perguntaPutRequest)
         {
             try
@@ -83,7 +83,7 @@ namespace ELA.Controllers
                 await context.Perguntas.AddAsync(pergunta);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("GetPergunta", new { id = pergunta.Id }, pergunta);
+                return Ok(pergunta);
             }
             catch(Exception ex)
             {

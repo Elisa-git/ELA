@@ -34,7 +34,7 @@ namespace ELA.Controllers
           {
               return NotFound();
           }
-            return await _context.Artigos.Include(a => a.Assuntos).ToListAsync();
+            return Ok(await _context.Artigos.Include(a => a.Assuntos).ToListAsync());
         }
 
         // GET: api/Artigos/5
@@ -57,7 +57,7 @@ namespace ELA.Controllers
 
         // PUT: api/Artigos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutArtigo(ArtigoPutRequest artigoPutRequest)
         {
             try
@@ -92,7 +92,7 @@ namespace ELA.Controllers
                 await _context.Artigos.AddAsync(artigo);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetArtigo", new { id = artigo.Id }, artigo);
+                return Ok(artigo);
             }
             catch (Exception ex)
             {

@@ -1,17 +1,23 @@
-﻿using ELA.Models;
+﻿using AutoMapper;
+using ELA.Models;
 using ELA.Models.Config;
+using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ELA.Validacoes
 {
     public class UsuarioValidacao : IUsuarioValidacao
     {
         private readonly MorusContext context;
+        private readonly IMapper mapper;
 
-        public UsuarioValidacao(MorusContext context) 
+        public UsuarioValidacao(MorusContext context, IMapper mapper) 
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
         public bool UsuarioExists(int id)
@@ -19,7 +25,20 @@ namespace ELA.Validacoes
             return (context.Usuarios?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        public async Task PostValidation(Usuario usuario)
+        public Usuario PostUsuario(UsuarioRequest usuarioRequest)
+        {
+            var usuario = mapper.Map<Usuario>(usuarioRequest);
+
+            var newData = new DateTime();
+            newData = usuario.DataNascimento.Date;
+            usuario.DataNascimento = newData;
+
+            UsuarioValidation(usuario);
+
+            return usuario;
+        }
+
+        public void UsuarioValidation(Usuario usuario)
         {
             var listaUsuarios = context.Usuarios.ToList();
             string mensagem;
@@ -34,24 +53,26 @@ namespace ELA.Validacoes
                 mensagem = "O Email utilizado já possui um cadastro";
                 throw new Exception(mensagem);
             }
-
-            context.Usuarios.Add(usuario);
-            await context.SaveChangesAsync();
         }
 
-        public async Task Login(Usuario usuario)
+        public async Task Login(LoginRequest loginRequest)
         {
             var listaUsuarios = context.Usuarios.ToList();
-            var validaEmail = listaUsuarios.FirstOrDefault(x => x.Email.Equals(usuario.Email));
+            var validaEmail = listaUsuarios.FirstOrDefault(x => x.Email.Equals(loginRequest.Email));
 
-            if (usuario.Senha == null || usuario.Email == null)
+            if (loginRequest.Senha == null || loginRequest.Email == null)
                 throw new Exception("Email e Senha precisam estar preenchidos");
                         
             if (validaEmail == null)
                 throw new Exception("Email não cadastrado");
 
-            if (!validaEmail.Senha.Equals(usuario.Senha))
+            if (!validaEmail.Senha.Equals(loginRequest.Senha))
                 throw new Exception("Senha não corresponde");
+        }
+
+        public Usuario RetornarUsuario(int id)
+        {
+            return context.Usuarios.FirstOrDefault(x => x.Id.Equals(id));
         }
     }
 }

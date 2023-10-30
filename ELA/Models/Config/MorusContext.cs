@@ -42,7 +42,10 @@ namespace ELA.Models.Config
         private void SeedDatabaseInicial(ModelBuilder builder)
         {
             builder.Entity<Usuario>().HasData
-                (new Usuario { Id = 1, CPF = "123.123.123-12", DataNascimento = new DateTime(1987, 09, 13), Email = "bella.swan@email.com", Nome = "Isabella Swan", Senha = "edwardJacob", TipoUsuarioEnum = TipoUsuarioEnum.Responsavel });
+                (
+                    new Usuario { Id = 1, CPF = "123.123.123-12", DataNascimento = new DateTime(1987, 09, 13), Email = "bella.swan@email.com", Nome = "Isabella Swan", Senha = "edwardJacob", TipoUsuarioEnum = TipoUsuarioEnum.Responsavel },
+                    new Usuario { Id = 2, CPF = "122.123.123-12", DataNascimento = new DateTime(1987, 05, 08), Email = "katnip@email.com", Nome = "Katniss Everdeen", Senha = "girlOnFire", TipoUsuarioEnum = TipoUsuarioEnum.Admin }
+                );
 
             builder.Entity<Assunto>().HasData
                 (

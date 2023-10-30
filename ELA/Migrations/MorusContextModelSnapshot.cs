@@ -248,6 +248,16 @@ namespace ELA.Migrations
                             Nome = "Isabella Swan",
                             Senha = "edwardJacob",
                             TipoUsuarioEnum = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CPF = "122.123.123-12",
+                            DataNascimento = new DateTime(1987, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "katnip@email.com",
+                            Nome = "Katniss Everdeen",
+                            Senha = "girlOnFire",
+                            TipoUsuarioEnum = 0
                         });
                 });
 

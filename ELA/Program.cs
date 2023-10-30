@@ -32,9 +32,13 @@ builder.Services.AddScoped<IFiqueAtentoValidacao, FiqueAtentoValidacao>();
 var config = new AutoMapper.MapperConfiguration(cfg =>
 {
     cfg.CreateMap<ArtigoRequest, Artigo>();
+    cfg.CreateMap<ArtigoPutRequest, Artigo>();
     cfg.CreateMap<FiqueAtentoRequest, FiqueAtento>();
     cfg.CreateMap<FiqueAtentoPutRequest, FiqueAtento>();
     cfg.CreateMap<PerguntaRequest, Pergunta>();
+    cfg.CreateMap<PerguntaPutRequest, Pergunta>();
+    cfg.CreateMap<UsuarioRequest, Usuario>();
+    cfg.CreateMap<AssuntoRequest, Assunto>();
 });
 
 IMapper mapper = config.CreateMapper();

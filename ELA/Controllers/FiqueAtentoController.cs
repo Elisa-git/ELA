@@ -25,27 +25,21 @@ namespace ELA.Controllers
         public async Task<ActionResult<IEnumerable<FiqueAtento>>> GetFiqueAtento()
         {
             if (context.FiqueAtentos == null)
-            {
                 return NotFound();
-            }
 
-            return await context.FiqueAtentos.Include(a => a.Assuntos).ToListAsync();
+            return Ok(await context.FiqueAtentos.Include(a => a.Assuntos).ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<FiqueAtento>> GetFiqueAtento(int id)
         {
             if (context.FiqueAtentos == null)
-            {
                 return NotFound();
-            }
 
             var fiqueAtento = fiqueAtentoValidacao.RetornarFiqueAtento(id);
 
             if (fiqueAtento == null)
-            {
                 return NotFound();
-            }
 
             return Ok(fiqueAtento);
         }
@@ -74,16 +68,14 @@ namespace ELA.Controllers
             try
             {
                 if (context.FiqueAtentos == null)
-                {
                     return Problem("Entity set 'MorusContext.FiqueAtento'  is null.");
-                }
 
                 var fiqueAtento = fiqueAtentoValidacao.ValidarFiqueAtento(fiqueAtentoRequest);
                     
                 await context.FiqueAtentos.AddAsync(fiqueAtento);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("GetFiqueAtento", new { id = fiqueAtento.Id }, fiqueAtento);
+                return Ok(fiqueAtento);
             }
             catch (Exception ex)
             {
@@ -97,16 +89,12 @@ namespace ELA.Controllers
             try
             {
                 if (context.FiqueAtentos == null)
-                {
                     return NotFound();
-                }
 
                 var fiqueAtento = fiqueAtentoValidacao.RetornarFiqueAtento(id);
 
                 if (fiqueAtento == null)
-                {
                     return NotFound();
-                }
 
                 context.FiqueAtentos.Remove(fiqueAtento);
                 await context.SaveChangesAsync();
