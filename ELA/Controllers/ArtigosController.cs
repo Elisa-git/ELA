@@ -26,37 +26,29 @@ namespace ELA.Controllers
             this.artigoValidacao = artigoValidacao;
         }
 
-        // GET: api/Artigos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Artigo>>> GetArtigos()
         {
-          if (_context.Artigos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Artigos == null)
+                return NotFound();
+
             return Ok(await _context.Artigos.Include(a => a.Assuntos).ToListAsync());
         }
 
-        // GET: api/Artigos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Artigo>> GetArtigo(int id)
         {
-          if (_context.Artigos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Artigos == null)
+                return NotFound();
+            
             var artigo = artigoValidacao.RetornarArtigo(id);
 
             if (artigo == null)
-            {
                 return NotFound();
-            }
 
             return Ok(artigo);
         }
 
-        // PUT: api/Artigos/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         public async Task<IActionResult> PutArtigo(ArtigoPutRequest artigoPutRequest)
         {
@@ -75,17 +67,13 @@ namespace ELA.Controllers
             }
         }
 
-        // POST: api/Artigos
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Artigo>> PostArtigo(ArtigoRequest artigoRequest)
         {
             try
             {
                 if (_context.Artigos == null)
-                {
                     return Problem("Entity set 'MorusContext.Artigos'  is null.");
-                }
 
                 var artigo = artigoValidacao.ValidarArtigo(artigoRequest);
 
@@ -100,23 +88,18 @@ namespace ELA.Controllers
             }
         }
 
-        // DELETE: api/Artigos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArtigo(int id)
         {
             try
             {
                 if (_context.Artigos == null)
-                {
                     return NotFound();
-                }
 
                 var artigo = artigoValidacao.RetornarArtigo(id);
             
                 if (artigo == null)
-                {
                     return NotFound();
-                }
 
                 _context.Artigos.Remove(artigo);
                 await _context.SaveChangesAsync();

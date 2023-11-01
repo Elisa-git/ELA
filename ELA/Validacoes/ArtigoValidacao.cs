@@ -25,7 +25,7 @@ namespace ELA.Validacoes
 
         public bool ArtigoExists(int id)
         {
-            return (context.Artigos?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (context.Artigos?.Include(p => p.Assuntos).Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         public Artigo ValidarArtigo(ArtigoRequest artigoRequest)
@@ -42,17 +42,17 @@ namespace ELA.Validacoes
 
         public Artigo ValidarAtualizacao(ArtigoPutRequest artigoPutRequest)
         {
-            if (!ArtigoExists(artigoPutRequest.Id))
+            var objExistente = RetornarArtigo(artigoPutRequest.Id);
+
+            if (objExistente == null)
                 throw new Exception("Id informado não existe");
             if (!usuarioValidacao.UsuarioExists(artigoPutRequest.Id)) 
                 throw new Exception("Usuário não cadastrado");
 
-            var retorno = RetornarArtigo(artigoPutRequest.Id);
-            Artigo artigo = ValidarAssuntos(retorno, artigoPutRequest.AssuntoId);
+            context.Entry(objExistente).CurrentValues.SetValues(artigoPutRequest);
+            Artigo artigo = ValidarAssuntos(objExistente, artigoPutRequest.AssuntoId);
 
-            mapper.Map(artigo, retorno);
-
-            return retorno;
+            return artigo;
         }
 
         private Artigo ValidarAssuntos(Artigo artigo, List<int> assuntosId)

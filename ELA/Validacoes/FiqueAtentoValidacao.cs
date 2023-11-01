@@ -25,13 +25,13 @@ namespace ELA.Validacoes
 
         public bool FiqueAtentoExists(int id)
         {
-            return (context.FiqueAtentos?.Any(f => f.Id.Equals(id))).GetValueOrDefault();
+            return (context.FiqueAtentos.Include(p => p.Assuntos).Any(f => f.Id.Equals(id)));
         }
 
         public FiqueAtento ValidarFiqueAtento(FiqueAtentoRequest fiqueAtentoRequest)
         {
             var fiqueAtentoMapeado = mapper.Map<FiqueAtento>(fiqueAtentoRequest);
-            FiqueAtento fiqueAtento = ValidarAssuntos(fiqueAtentoMapeado, fiqueAtentoRequest.AssuntoId);
+            FiqueAtento fiqueAtento = ValidarAssuntos(fiqueAtentoMapeado, fiqueAtentoRequest.AssuntosId);
 
             if (!usuarioValidacao.UsuarioExists(fiqueAtento.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
@@ -41,19 +41,19 @@ namespace ELA.Validacoes
         }
 
         public FiqueAtento ValidarAtualizacao(FiqueAtentoPutRequest fiqueAtentoPutRequest)
-        {         
-            if (!FiqueAtentoExists(fiqueAtentoPutRequest.Id))
-                throw new Exception("Id informado não existe");
+        {
+            var objExistente = RetornarFiqueAtento(fiqueAtentoPutRequest.Id);
+
+            if (objExistente == null)
+                throw new Exception("Objeto informado não existe");
 
             if (!usuarioValidacao.UsuarioExists(fiqueAtentoPutRequest.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
-            var retorno = RetornarFiqueAtento(fiqueAtentoPutRequest.Id);
-            FiqueAtento fiqueAtento = ValidarAssuntos(retorno, fiqueAtentoPutRequest.AssuntoId);
+            context.Entry(objExistente).CurrentValues.SetValues(fiqueAtentoPutRequest);
+            FiqueAtento fiqueAtento = ValidarAssuntos(objExistente, fiqueAtentoPutRequest.AssuntosId);
 
-            mapper.Map(fiqueAtento, retorno);
-
-            return retorno;
+            return fiqueAtento;
         }
 
         private FiqueAtento ValidarAssuntos(FiqueAtento fiqueAtento, List<int> assuntosId)

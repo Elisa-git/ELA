@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELA.Migrations
 {
     [DbContext(typeof(MorusContext))]
-    [Migration("20231029232038_inicial")]
+    [Migration("20231031232824_inicial")]
     partial class inicial
     {
         /// <inheritdoc />

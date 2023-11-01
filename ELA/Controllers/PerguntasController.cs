@@ -26,9 +26,8 @@ namespace ELA.Controllers
         public async Task<ActionResult<IEnumerable<Pergunta>>> GetPerguntas()
         {
             if (context.Perguntas == null)
-            {
                 return NotFound();
-            }
+
             return Ok(await context.Perguntas.Include(a => a.Assuntos).ToListAsync());
         }
 
@@ -36,16 +35,12 @@ namespace ELA.Controllers
         public async Task<ActionResult<Pergunta>> GetPergunta(int id)
         {
             if (context.Perguntas == null)
-            {
                 return NotFound();
-            }
 
             var pergunta = perguntaValidacao.RetornarPergunta(id);
 
             if (pergunta == null)
-            {
                 return NotFound();
-            }
 
             return Ok(pergunta);
         }
@@ -74,9 +69,7 @@ namespace ELA.Controllers
             try
             {
                 if (context.Perguntas == null)
-                {
                     return Problem("Entity set 'MorusContext.Perguntas'  is null.");
-                }
 
                 var pergunta = perguntaValidacao.ValidarPergunta(perguntaRequest);
 
@@ -97,14 +90,11 @@ namespace ELA.Controllers
             try 
             { 
                 if (context.Perguntas == null)
-                {
                     return NotFound();
-                }
+
                 var pergunta = perguntaValidacao.RetornarPergunta(id);
                 if (pergunta == null)
-                {
                     return NotFound();
-                }
 
                 context.Perguntas.Remove(pergunta);
                 await context.SaveChangesAsync();

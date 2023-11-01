@@ -25,7 +25,7 @@ namespace ELA.Validacoes
 
         public bool PerguntaExists(int id)
         {
-            return (context.Perguntas?.Any(p => p.Id == id)).GetValueOrDefault();
+            return (context.Perguntas?.Include(p => p.Assuntos).Any(p => p.Id == id)).GetValueOrDefault();
         }
 
         public Pergunta ValidarPergunta(PerguntaRequest perguntaRequest)
@@ -43,18 +43,18 @@ namespace ELA.Validacoes
 
         public Pergunta ValidarAtualizacao(PerguntaPutRequest perguntaPutRequest)
         {
-            if (!PerguntaExists(perguntaPutRequest.Id))
+            var objExistente = RetornarPergunta(perguntaPutRequest.Id);
+
+            if (objExistente == null)
                 throw new Exception("Id informado não existe");
 
             if (!usuarioValidacao.UsuarioExists(perguntaPutRequest.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
-            var retorno = RetornarPergunta(perguntaPutRequest.Id);
-            Pergunta pergunta = ValidarAssuntos(retorno, perguntaPutRequest.AssuntoId);
+            context.Entry(objExistente).CurrentValues.SetValues(perguntaPutRequest);
+            Pergunta pergunta = ValidarAssuntos(objExistente, perguntaPutRequest.AssuntoId);
 
-            mapper.Map(pergunta, retorno);
-
-            return retorno;
+            return pergunta;
         }
 
         private Pergunta ValidarAssuntos(Pergunta pergunta, List<int> assuntosId)

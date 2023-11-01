@@ -1,4 +1,6 @@
-﻿namespace ELA.Models.Requests
+﻿using System.Text.Json.Serialization;
+
+namespace ELA.Models.Requests
 {
     public class FiqueAtentoPutRequest
     {
@@ -8,6 +10,6 @@
         public string Texto { get; set; }
         public DateTime DataPostagem { get; set; }
         public int UsuarioId { get; set; }
-        public List<int> AssuntoId { get; set; }
+        public List<int> AssuntosId { get; set; }
     }
 }
