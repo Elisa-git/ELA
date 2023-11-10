@@ -9,13 +9,13 @@ namespace ELA.Validacoes
 {
     public class PerguntaValidacao : IPerguntaValidacao
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
         private readonly IUsuarioValidacao usuarioValidacao;
         private readonly IAssuntoValidacao assuntoValidacao;
         private readonly IMapper mapper;
 
 
-        public PerguntaValidacao(MorusContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
+        public PerguntaValidacao(ELAContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
         {
             this.context = context;
             this.usuarioValidacao = usuarioValidacao;

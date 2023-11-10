@@ -13,10 +13,10 @@ namespace ELA.Controllers
     [ApiController]
     public class PerguntasController : ControllerBase
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
         private readonly IPerguntaValidacao perguntaValidacao;
 
-        public PerguntasController(MorusContext context, IPerguntaValidacao perguntaValidacao)
+        public PerguntasController(ELAContext context, IPerguntaValidacao perguntaValidacao)
         {
             this.context = context;
             this.perguntaValidacao = perguntaValidacao;
@@ -69,7 +69,7 @@ namespace ELA.Controllers
             try
             {
                 if (context.Perguntas == null)
-                    return Problem("Entity set 'MorusContext.Perguntas'  is null.");
+                    return Problem("Entity set 'ELAContext.Perguntas'  is null.");
 
                 var pergunta = perguntaValidacao.ValidarPergunta(perguntaRequest);
 

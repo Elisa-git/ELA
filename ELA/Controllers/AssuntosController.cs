@@ -17,11 +17,11 @@ namespace ELA.Controllers
     [ApiController]
     public class AssuntosController : ControllerBase
     {
-        private readonly MorusContext _context;
+        private readonly ELAContext _context;
         private readonly IAssuntoValidacao assuntoValidacao;
         private readonly IMapper mapper;
 
-        public AssuntosController(MorusContext context, IAssuntoValidacao assuntoValidacao, IMapper mapper)
+        public AssuntosController(ELAContext context, IAssuntoValidacao assuntoValidacao, IMapper mapper)
         {
             _context = context;
             this.assuntoValidacao = assuntoValidacao;
@@ -89,7 +89,7 @@ namespace ELA.Controllers
             {
                 if (_context.Assuntos == null)
                 {
-                    return Problem("Entity set 'MorusContext.Assuntos'  is null.");
+                    return Problem("Entity set 'ELAContext.Assuntos'  is null.");
                 }
 
                 var assunto = mapper.Map<Assunto>(assuntoRequest);

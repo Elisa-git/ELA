@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<MorusContext>(opt => opt.UseMySQL("Server=localhost;Database=ElaDb;user=root"));
+builder.Services.AddDbContext<ELAContext>(opt => opt.UseMySQL("Server=localhost;Database=ElaDb;user=root"));
 
 // Camada Validacao
 

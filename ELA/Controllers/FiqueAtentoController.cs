@@ -12,10 +12,10 @@ namespace ELA.Controllers
     [ApiController]
     public class FiqueAtentoController : ControllerBase
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
         private readonly IFiqueAtentoValidacao fiqueAtentoValidacao;
 
-        public FiqueAtentoController(MorusContext context, IFiqueAtentoValidacao fiqueAtentoValidacao)
+        public FiqueAtentoController(ELAContext context, IFiqueAtentoValidacao fiqueAtentoValidacao)
         {
             this.context = context;
             this.fiqueAtentoValidacao = fiqueAtentoValidacao;
@@ -68,7 +68,7 @@ namespace ELA.Controllers
             try
             {
                 if (context.FiqueAtentos == null)
-                    return Problem("Entity set 'MorusContext.FiqueAtento'  is null.");
+                    return Problem("Entity set 'ELAContext.FiqueAtento'  is null.");
 
                 var fiqueAtento = fiqueAtentoValidacao.ValidarFiqueAtento(fiqueAtentoRequest);
                     

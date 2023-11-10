@@ -10,12 +10,12 @@ namespace ELA.Validacoes
 {
     public class FiqueAtentoValidacao : IFiqueAtentoValidacao
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
         private readonly IUsuarioValidacao usuarioValidacao;
         private readonly IAssuntoValidacao assuntoValidacao;
         private readonly IMapper mapper;
 
-        public FiqueAtentoValidacao(MorusContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
+        public FiqueAtentoValidacao(ELAContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
         {
             this.context = context;
             this.usuarioValidacao = usuarioValidacao;

@@ -5,16 +5,15 @@ using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ELA.Validacoes
 {
     public class UsuarioValidacao : IUsuarioValidacao
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
         private readonly IMapper mapper;
 
-        public UsuarioValidacao(MorusContext context, IMapper mapper) 
+        public UsuarioValidacao(ELAContext context, IMapper mapper) 
         {
             this.context = context;
             this.mapper = mapper;

@@ -17,10 +17,10 @@ namespace ELA.Controllers
     [ApiController]
     public class ArtigosController : ControllerBase
     {
-        private readonly MorusContext _context;
+        private readonly ELAContext _context;
         private readonly IArtigoValidacao artigoValidacao;
 
-        public ArtigosController(MorusContext context, IArtigoValidacao artigoValidacao)
+        public ArtigosController(ELAContext context, IArtigoValidacao artigoValidacao)
         {
             _context = context;
             this.artigoValidacao = artigoValidacao;
@@ -73,7 +73,7 @@ namespace ELA.Controllers
             try
             {
                 if (_context.Artigos == null)
-                    return Problem("Entity set 'MorusContext.Artigos'  is null.");
+                    return Problem("Entity set 'ELAContext.Artigos'  is null.");
 
                 var artigo = artigoValidacao.ValidarArtigo(artigoRequest);
 
@@ -87,6 +87,24 @@ namespace ELA.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpPost("{id}")]
+        //public async Task<IActionResult> UploadImage()
+        //{
+        //try
+        //{
+        //if (Request.Form.Files.Count == 0)
+        //return BadRequest();
+        //
+        //IFormFileCollection arquivo = Request.Form.Files;
+        //var response = artigoValidacao.UploadImage(arquivos);
+
+        //return Ok(response);
+        //}
+        //catch (Exception ex)
+        //{
+        //}
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArtigo(int id)

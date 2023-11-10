@@ -7,9 +7,9 @@ namespace ELA.Validacoes
 {
     public class AssuntoValidacao : IAssuntoValidacao
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
 
-        public AssuntoValidacao(MorusContext context)
+        public AssuntoValidacao(ELAContext context)
         {
             this.context = context;
         }

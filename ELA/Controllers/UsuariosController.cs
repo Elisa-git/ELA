@@ -9,7 +9,6 @@ using ELA.Models;
 using ELA.Models.Config;
 using ELA.Validacoes.Interface;
 using ELA.Models.Requests;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ELA.Controllers
 {
@@ -17,10 +16,10 @@ namespace ELA.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        private readonly MorusContext _context;
+        private readonly ELAContext _context;
         private readonly IUsuarioValidacao usuarioValidacao;
 
-        public UsuariosController(MorusContext context, IUsuarioValidacao usuarioValidacao)
+        public UsuariosController(ELAContext context, IUsuarioValidacao usuarioValidacao)
         {
             _context = context;
             this.usuarioValidacao = usuarioValidacao;
@@ -84,7 +83,7 @@ namespace ELA.Controllers
             try
             {
                 if (_context.Usuarios == null)
-                    return Problem("Entity set 'MorusContext.Usuarios' is null.");
+                    return Problem("Entity set 'ELAContext.Usuarios' is null.");
 
                 var usuario = usuarioValidacao.PostUsuario(usuarioRequest);
 
@@ -131,7 +130,7 @@ namespace ELA.Controllers
             {
                 if (_context.Usuarios == null)
                 {
-                    return Problem("Entity set 'MorusContext.Usuarios' is null.");
+                    return Problem("Entity set 'ELAContext.Usuarios' is null.");
                 }
 
                 await usuarioValidacao.Login(loginRequest);

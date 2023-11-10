@@ -3,19 +3,16 @@ using System;
 using ELA.Models.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace ELA.Migrations
 {
-    [DbContext(typeof(MorusContext))]
-    [Migration("20231031232824_inicial")]
-    partial class inicial
+    [DbContext(typeof(ELAContext))]
+    partial class ELAContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -6,9 +6,9 @@ using System.Reflection.Metadata;
 
 namespace ELA.Models.Config
 {
-    public class MorusContext : DbContext
+    public class ELAContext : DbContext
     {
-        public MorusContext(DbContextOptions<MorusContext> options) : base(options) { }
+        public ELAContext(DbContextOptions<ELAContext> options) : base(options) { }
 
         public DbSet<Usuario> Usuarios { get; set; } = null!;
         public DbSet<Assunto> Assuntos { get; set; } = null!;

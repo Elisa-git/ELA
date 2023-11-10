@@ -10,12 +10,12 @@ namespace ELA.Validacoes
 {
     public class ArtigoValidacao : IArtigoValidacao
     {
-        private readonly MorusContext context;
+        private readonly ELAContext context;
         private readonly IUsuarioValidacao usuarioValidacao;
         private readonly IAssuntoValidacao assuntoValidacao;
         private readonly IMapper mapper;
 
-        public ArtigoValidacao(MorusContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
+        public ArtigoValidacao(ELAContext context, IUsuarioValidacao usuarioValidacao, IAssuntoValidacao assuntoValidacao, IMapper mapper)
         {
             this.context = context;
             this.usuarioValidacao = usuarioValidacao;
@@ -55,6 +55,14 @@ namespace ELA.Validacoes
             return artigo;
         }
 
+        //public IFormFileCollection UploadImage(IFormFileCollection arquivos)
+        //{
+        //     foreach (IFormFile file in arquivos)
+        //    {
+
+        //}
+        //}
+
         private Artigo ValidarAssuntos(Artigo artigo, List<int> assuntosId)
         {
             List<Assunto> assuntos = new List<Assunto>();
@@ -72,6 +80,7 @@ namespace ELA.Validacoes
             artigo.Assuntos = assuntos;
             return artigo;
         }
+
 
         public Artigo RetornarArtigo(int id)
         {
