@@ -27,12 +27,20 @@ namespace ELA.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Artigo>>> GetArtigos()
+        public ActionResult<IEnumerable<Artigo>> GetArtigos([FromQuery] ArtigoGetRequest artigoGetRequest)
         {
-            if (_context.Artigos == null)
-                return NotFound();
+            try
+            {
+                if (_context.Artigos == null)
+                    return NotFound();
 
-            return Ok(await _context.Artigos.Include(a => a.Assuntos).ToListAsync());
+                var artigos = artigoValidacao.GetArtigos(artigoGetRequest);
+                return Ok(artigos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

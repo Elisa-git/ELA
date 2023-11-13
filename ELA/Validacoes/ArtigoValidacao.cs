@@ -5,6 +5,7 @@ using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
+using System.Collections.Generic;
 
 namespace ELA.Validacoes
 {
@@ -26,6 +27,18 @@ namespace ELA.Validacoes
         public bool ArtigoExists(int id)
         {
             return (context.Artigos?.Include(p => p.Assuntos).Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public IEnumerable<Artigo> GetArtigos(ArtigoGetRequest artigoGetRequest)
+        {
+            IEnumerable<Artigo> artigos = context.Artigos.Include(a => a.Assuntos).ToList();
+
+            if (artigoGetRequest.AssuntoId != null)
+                artigos = artigos.Where(x => x.Assuntos.First().Id.Equals(artigoGetRequest.AssuntoId));
+            if (artigoGetRequest.Titulo != null)
+                artigos = artigos.Where(x => x.Titulo.Contains(artigoGetRequest.Titulo));
+
+            return artigos;
         }
 
         public Artigo ValidarArtigo(ArtigoRequest artigoRequest)
