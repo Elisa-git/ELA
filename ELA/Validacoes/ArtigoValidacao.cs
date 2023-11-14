@@ -41,20 +41,41 @@ namespace ELA.Validacoes
             return artigos;
         }
 
-        public Artigo ValidarArtigo(ArtigoRequest artigoRequest)
+        public Artigo ValidarArtigo(ArtigoRequest artigoRequest, IFormFile file)
         {
+            artigoRequest.Imagem = null;
+
             var artigoMapeado = mapper.Map<Artigo>(artigoRequest);
             Artigo artigo = ValidarAssuntos(artigoMapeado, artigoRequest.AssuntoId);
 
             if (!usuarioValidacao.UsuarioExists(artigo.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
+            if (file != null)
+            {
+                artigo = MapearImagem(file, artigo);
+            }
+
             artigo.DataPostagem = DateTime.Now;
+            return artigo;
+        }
+
+        private Artigo MapearImagem(IFormFile file, Artigo artigo) 
+        {
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+                artigo.Imagem = stream.ToArray();
+            }
+
             return artigo;
         }
 
         public Artigo ValidarAtualizacao(ArtigoPutRequest artigoPutRequest)
         {
+            IFormFile file = artigoPutRequest.Imagem;
+            artigoPutRequest.Imagem = null;
+
             var objExistente = RetornarArtigo(artigoPutRequest.Id);
 
             if (objExistente == null)
@@ -65,16 +86,13 @@ namespace ELA.Validacoes
             context.Entry(objExistente).CurrentValues.SetValues(artigoPutRequest);
             Artigo artigo = ValidarAssuntos(objExistente, artigoPutRequest.AssuntoId);
 
+            if (file != null)
+            {
+                artigo = MapearImagem(file, artigo);
+            }
+
             return artigo;
         }
-
-        //public IFormFileCollection UploadImage(IFormFileCollection arquivos)
-        //{
-        //     foreach (IFormFile file in arquivos)
-        //    {
-
-        //}
-        //}
 
         private Artigo ValidarAssuntos(Artigo artigo, List<int> assuntosId)
         {

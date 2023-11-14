@@ -58,7 +58,7 @@ namespace ELA.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutArtigo(ArtigoPutRequest artigoPutRequest)
+        public async Task<IActionResult> PutArtigo([FromForm] ArtigoPutRequest artigoPutRequest)
         {
             try
             {
@@ -76,14 +76,14 @@ namespace ELA.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Artigo>> PostArtigo(ArtigoRequest artigoRequest)
+        public async Task<ActionResult<Artigo>> PostArtigo([FromForm] ArtigoRequest artigoRequest)
         {
             try
             {
                 if (_context.Artigos == null)
                     return Problem("Entity set 'ELAContext.Artigos'  is null.");
 
-                var artigo = artigoValidacao.ValidarArtigo(artigoRequest);
+                var artigo = artigoValidacao.ValidarArtigo(artigoRequest, artigoRequest.Imagem);
 
                 await _context.Artigos.AddAsync(artigo);
                 await _context.SaveChangesAsync();
@@ -95,24 +95,6 @@ namespace ELA.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        //[HttpPost("{id}")]
-        //public async Task<IActionResult> UploadImage()
-        //{
-        //try
-        //{
-        //if (Request.Form.Files.Count == 0)
-        //return BadRequest();
-        //
-        //IFormFileCollection arquivo = Request.Form.Files;
-        //var response = artigoValidacao.UploadImage(arquivos);
-
-        //return Ok(response);
-        //}
-        //catch (Exception ex)
-        //{
-        //}
-        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArtigo(int id)

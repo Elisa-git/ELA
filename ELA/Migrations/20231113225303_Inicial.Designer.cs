@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELA.Migrations
 {
     [DbContext(typeof(ELAContext))]
-    [Migration("20231110010840_Inicial")]
+    [Migration("20231113225303_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -85,6 +85,9 @@ namespace ELA.Migrations
 
                     b.Property<DateTime>("DataPostagem")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<byte[]>("Imagem")
+                        .HasColumnType("longblob");
 
                     b.Property<string>("Resumo")
                         .IsRequired()

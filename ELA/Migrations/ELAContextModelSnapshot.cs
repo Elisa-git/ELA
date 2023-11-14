@@ -83,6 +83,9 @@ namespace ELA.Migrations
                     b.Property<DateTime>("DataPostagem")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<byte[]>("Imagem")
+                        .HasColumnType("longblob");
+
                     b.Property<string>("Resumo")
                         .IsRequired()
                         .HasColumnType("longtext");

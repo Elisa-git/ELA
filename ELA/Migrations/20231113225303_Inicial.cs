@@ -59,6 +59,7 @@ namespace ELA.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     SubTitulo = table.Column<string>(type: "longtext", nullable: false),
                     Texto = table.Column<string>(type: "longtext", nullable: false),
+                    Imagem = table.Column<byte[]>(type: "longblob", nullable: true),
                     Titulo = table.Column<string>(type: "longtext", nullable: false),
                     Resumo = table.Column<string>(type: "longtext", nullable: false),
                     DataPostagem = table.Column<DateTime>(type: "datetime(6)", nullable: false)
