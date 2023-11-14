@@ -5,6 +5,7 @@ using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
+using System.Collections.Generic;
 
 namespace ELA.Validacoes
 {
@@ -28,20 +29,53 @@ namespace ELA.Validacoes
             return (context.Artigos?.Include(p => p.Assuntos).Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        public Artigo ValidarArtigo(ArtigoRequest artigoRequest)
+        public IEnumerable<Artigo> GetArtigos(ArtigoGetRequest artigoGetRequest)
         {
+            IEnumerable<Artigo> artigos = context.Artigos.Include(a => a.Assuntos).ToList();
+
+            if (artigoGetRequest.AssuntoId != null)
+                artigos = artigos.Where(x => x.Assuntos.First().Id.Equals(artigoGetRequest.AssuntoId));
+            if (artigoGetRequest.Titulo != null)
+                artigos = artigos.Where(x => x.Titulo.Contains(artigoGetRequest.Titulo));
+
+            return artigos;
+        }
+
+        public Artigo ValidarArtigo(ArtigoRequest artigoRequest, IFormFile file)
+        {
+            artigoRequest.Imagem = null;
+
             var artigoMapeado = mapper.Map<Artigo>(artigoRequest);
             Artigo artigo = ValidarAssuntos(artigoMapeado, artigoRequest.AssuntoId);
 
             if (!usuarioValidacao.UsuarioExists(artigo.UsuarioId))
                 throw new Exception("Usuário não cadastrado");
 
+            if (file != null)
+            {
+                artigo = MapearImagem(file, artigo);
+            }
+
             artigo.DataPostagem = DateTime.Now;
+            return artigo;
+        }
+
+        private Artigo MapearImagem(IFormFile file, Artigo artigo) 
+        {
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+                artigo.Imagem = stream.ToArray();
+            }
+
             return artigo;
         }
 
         public Artigo ValidarAtualizacao(ArtigoPutRequest artigoPutRequest)
         {
+            IFormFile file = artigoPutRequest.Imagem;
+            artigoPutRequest.Imagem = null;
+
             var objExistente = RetornarArtigo(artigoPutRequest.Id);
 
             if (objExistente == null)
@@ -52,16 +86,13 @@ namespace ELA.Validacoes
             context.Entry(objExistente).CurrentValues.SetValues(artigoPutRequest);
             Artigo artigo = ValidarAssuntos(objExistente, artigoPutRequest.AssuntoId);
 
+            if (file != null)
+            {
+                artigo = MapearImagem(file, artigo);
+            }
+
             return artigo;
         }
-
-        //public IFormFileCollection UploadImage(IFormFileCollection arquivos)
-        //{
-        //     foreach (IFormFile file in arquivos)
-        //    {
-
-        //}
-        //}
 
         private Artigo ValidarAssuntos(Artigo artigo, List<int> assuntosId)
         {

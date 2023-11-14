@@ -7,6 +7,7 @@ namespace ELA.Models
     {
         public string SubTitulo { get; set; }
         public string Texto { get; set; }
+        public byte[]? Imagem { get; set; }
 
     }
 }

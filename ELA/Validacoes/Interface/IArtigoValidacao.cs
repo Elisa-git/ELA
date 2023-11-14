@@ -6,7 +6,8 @@ namespace ELA.Validacoes.Interface
     public interface IArtigoValidacao
     {
         bool ArtigoExists(int id);
-        Artigo ValidarArtigo(ArtigoRequest artigoRequest);
+        IEnumerable<Artigo> GetArtigos(ArtigoGetRequest artigoGetRequest);
+        Artigo ValidarArtigo(ArtigoRequest artigoRequest, IFormFile file);
         Artigo ValidarAtualizacao(ArtigoPutRequest artigoPutRequest);
         Artigo RetornarArtigo(int id);
     }
