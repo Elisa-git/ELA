@@ -1,7 +1,5 @@
 ﻿using ELA.Models;
 using ELA.Models.Requests;
-using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol.Plugins;
 
 namespace ELA.Validacoes.Interface
 {

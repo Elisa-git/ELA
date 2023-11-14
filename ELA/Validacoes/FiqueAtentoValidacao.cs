@@ -4,7 +4,6 @@ using ELA.Models.Config;
 using ELA.Models.Requests;
 using ELA.Validacoes.Interface;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Versioning;
 
 namespace ELA.Validacoes
 {
